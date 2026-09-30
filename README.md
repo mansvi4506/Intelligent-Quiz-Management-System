@@ -28,7 +28,7 @@ A Django web application for creating and taking AI-generated quizzes. Users can
 1. Clone the repository and enter the project directory:
 
    ```bash
-   git clone https://github.com/YOUR-USERNAME/Intelligent-Quiz-Management-System.git
+   git clone https://github.com/mansvi4506/Intelligent-Quiz-Management-System.git
    cd Intelligent-Quiz-Management-System
    ```
 
@@ -82,4 +82,4 @@ The application expects `GROQ_API_KEY` to be available through the environment. 
 
 ## License
 
-No license has been selected. All rights are reserved by default unless a license is added.
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for the full license text.
