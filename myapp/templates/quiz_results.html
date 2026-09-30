@@ -1,0 +1,190 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="results-glass mx-auto mt-5 p-4">
+    <h2 class="results-title mb-4">🎯 Quiz Results</h2>
+
+    <h3 class="score-text mb-2">You scored:</h3>
+    <div class="score-box mb-3">{{ attempt.score }} / {{ attempt.total }}</div>
+
+    {% if attempt.score == attempt.total %}
+        <p class="score-msg perfect">🌟 Excellent! Perfect Score!</p>
+    {% elif attempt.score >= attempt.total|divisibleby:2 %}
+        <p class="score-msg good">👍 Good Job! Keep Practicing!</p>
+    {% else %}
+        <p class="score-msg practice">💡 Keep Learning! You can do better next time!</p>
+    {% endif %}
+
+    <hr class="my-4">
+
+    <div class="text-start">
+        <h4 class="answers-title mb-3">📘 Your Answers & Explanations:</h4>
+        {% for ans in answers %}
+            <div class="answer-card p-3 mb-3 {% if ans.is_correct %}bg-correct{% else %}bg-incorrect{% endif %}">
+                <p class="question"><strong>Q{{ forloop.counter }}:</strong> {{ ans.quiz.question }}</p>
+                <p>
+                    Your Answer:
+                    <span class="{% if ans.is_correct %}text-success{% else %}text-danger{% endif %}">
+                        {{ ans.selected_answer }}
+                    </span>
+                </p>
+                <p>
+                    ✅ Correct Answer:
+                    <span class="text-success">{{ ans.quiz.correct_answer }}</span>
+                </p>
+                <p class="mt-2 text-secondary explanation">
+                    💬 <strong>Explanation:</strong>
+                    {% if ans.quiz.explanation %}
+                        {{ ans.quiz.explanation }}
+                    {% else %}
+                        <span class="text-muted fst-italic">No explanation available.</span>
+                    {% endif %}
+                </p>
+            </div>
+        {% endfor %}
+    </div>
+
+    <div class="mt-4 d-flex justify-content-center gap-2 flex-wrap">
+        <a href="{% url 'quiz_history' %}" class="btn btn-history">📜 View Quiz History</a>
+        <a href="{% url 'retake_quiz' attempt.id %}" class="btn btn-retake">🔄 Retake Same Quiz</a>
+        <a href="{% url 'quiz' %}" class="btn btn-custom">🚀 Take Another Quiz</a>
+    </div>
+</div>
+
+<style>
+.results-glass {
+    max-width: 700px;
+    background: linear-gradient(120deg, #e0ecffcc 60%, #bafad6d2 100%);
+    border-radius: 20px;
+    box-shadow: 0 8px 40px #11c2df2b;
+    border: 2px solid #8aeaf8a3;
+    backdrop-filter: blur(3.5px);
+}
+.results-title {
+    font-weight: 900;
+    color: #1b5d7a;
+    letter-spacing: 1.2px;
+    text-shadow: 0 3px 10px #cbeeffc9;
+}
+.score-text {
+    font-size: 1.3rem;
+    color: #319181;
+    font-weight: 700;
+}
+.score-box {
+    font-size: 2.8rem;
+    background: linear-gradient(90deg, #21e6c1 55%, #66a6ff 100%);
+    color: #fff;
+    font-weight: 900;
+    border-radius: 15px;
+    display: inline-block;
+    padding: 13px 38px;
+    box-shadow: 0 2px 20px #85ffe735;
+    letter-spacing: 2px;
+}
+.score-msg {
+    font-weight: 600;
+    font-size: 1.1rem;
+    border-radius: 7px;
+    padding: 7px 20px;
+    display: inline-block;
+}
+.score-msg.perfect {
+    background: linear-gradient(90deg, #d4fc79, #96e6a1 100%);
+    color: #1b7e2a;
+}
+.score-msg.good {
+    background: linear-gradient(90deg, #f9d423 60%, #ff4e50 100%);
+    color: #948110;
+}
+.score-msg.practice {
+    background: linear-gradient(90deg, #f7971e, #ffd200b6 100%);
+    color: #b92909;
+}
+.answers-title {
+    font-weight: 700;
+    color: #1b5d7a;
+}
+.answer-card {
+    border-radius: 13px;
+    border-left: 7px solid #69efc7;
+    box-shadow: 0 3px 13px #0079a819;
+    background: rgba(255,255,255,0.91);
+    transition: background 0.18s, border-color 0.15s;
+}
+.bg-correct {
+    border-left-color: #19c37d;
+    background: linear-gradient(94deg, #ebfff6 71%, #e3fafd 100%);
+}
+.bg-incorrect {
+    border-left-color: #f94b70;
+    background: linear-gradient(94deg, #fff5f5 65%, #ffdede 100%);
+}
+.answer-card .question {
+    font-weight: 600;
+    margin-bottom: 0.36rem;
+    color: #237ea7;
+}
+.explanation {
+    color: #62717c;
+}
+.text-success {
+    color: #1dbb6d !important;
+}
+.text-danger {
+    color: #ca4040 !important;
+}
+.btn-history {
+    background: linear-gradient(90deg,#56c6e6 40%,#3a7bd5 100%);
+    color: #fff;
+    border-radius: 9px;
+    font-weight: 600;
+    padding: 10px 23px;
+    border: none;
+    box-shadow: 0 2px 7px #43aaff2c;
+    transition: background 0.19s, box-shadow 0.13s, transform 0.07s;
+}
+.btn-history:hover {
+    background: linear-gradient(90deg, #267cbc 60%, #2eb4b9 100%);
+    color: #fff;
+    box-shadow: 0 3px 10px #36a2e77b;
+    transform: translateY(-2px) scale(1.04);
+}
+.btn-retake {
+    background: linear-gradient(90deg,#ffe259,#ffa751);
+    color: #825300;
+    border-radius: 9px;
+    font-weight: 600;
+    padding: 10px 23px;
+    border: none;
+    box-shadow: 0 1px 8px #e6b9002b;
+    transition: background 0.19s, box-shadow 0.13s, transform 0.07s;
+}
+.btn-retake:hover {
+    background: linear-gradient(90deg,#ffc171,#ffe259);
+    color: #b89520;
+    box-shadow: 0 3px 10px #f7d8878b;
+    transform: translateY(-2px) scale(1.04);
+}
+.btn-custom {
+    background: linear-gradient(90deg, #55efc4 60%, #3ec6e0 100%);
+    color: #fff;
+    border-radius: 9px;
+    font-weight: 600;
+    padding: 10px 24px;
+    border: none;
+    box-shadow: 0 2px 8px #4de0e86e;
+    transition: background 0.21s, box-shadow 0.16s, transform 0.09s;
+}
+.btn-custom:hover {
+    background: linear-gradient(90deg,#18bfa4 60%,#0e7db2 100%);
+    color: #fff;
+    box-shadow: 0 3px 14px #32d8ef52;
+    transform: translateY(-2px) scale(1.04);
+}
+@media (max-width: 600px) {
+    .results-glass { padding: 10px !important; max-width: 99vw; }
+    .score-box { font-size: 2rem; padding: 10px 15px; }
+    .answer-card { padding: 10px 8px; }
+}
+</style>
+{% endblock %}

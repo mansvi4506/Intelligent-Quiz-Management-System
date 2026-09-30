@@ -1,0 +1,185 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+
+            <!-- Card for Edit Profile -->
+            <div class="card shadow-lg border-0 rounded-4 bg-light-mode">
+                <div class="card-header text-white text-center rounded-top-4" style="background-color: #5b9bd5;">
+                    <h3 class="mb-0">Edit Profile</h3>
+                </div>
+                <div class="card-body p-4">
+
+                    <!-- Toast Notification for Success -->
+                    {% if messages %}
+                        <div class="position-fixed top-0 end-0 p-3" style="z-index: 11">
+                            {% for message in messages %}
+                                <div class="toast align-items-center border-0 show" role="alert" aria-live="assertive" aria-atomic="true"
+                                     style="background-color: #2e7d32; color: white;">
+                                    <div class="d-flex">
+                                        <div class="toast-body">
+                                            {{ message }}
+                                        </div>
+                                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
+                    <!-- Form -->
+                    <form method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+
+                        <!-- User Info -->
+                        <h5 class="mb-3 section-title"><i class="bi bi-person-circle me-2"></i>User Info</h5>
+                        <div class="card section-card">
+                            {{ u_form.as_p }}
+                        </div>
+
+                        <!-- Profile Info -->
+                        <h5 class="mb-3 section-title profile-title"><i class="bi bi-person-badge-fill me-2"></i>Profile Info</h5>
+                        <div class="card section-card">
+                            {{ p_form.as_p }}
+
+                            {# Removed Theme / Appearance selector as requested #}
+                            {#<div class="mb-3">
+                                <label for="theme" class="form-label fw-semibold">🎨 Theme / Appearance</label>
+                                <select class="form-select" id="theme" name="theme">
+                                    <option value="light" {% if user.profile.theme == "light" %}selected{% endif %}>Light Mode</option>
+                                    <option value="dark" {% if user.profile.theme == "dark" %}selected{% endif %}>Dark Mode</option>
+                                </select>
+                                <div class="form-text">Select your preferred appearance for the app.</div>
+                            </div>#}
+
+                        </div>
+
+                        <!-- Submit button -->
+                        <div class="text-center">
+                            <button type="submit" class="btn px-5 py-2 rounded-pill shadow-sm btn-submit">
+                                <i class="bi bi-save me-2"></i> Update Profile
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- Toast Auto-hide -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var toastElList = [].slice.call(document.querySelectorAll('.toast'))
+    toastElList.map(function(toastEl) {
+        var toast = new bootstrap.Toast(toastEl, { delay: 3000 })
+        toast.show()
+    })
+});
+</script>
+
+<!-- Adaptive Styling -->
+<style>
+body {
+    background: linear-gradient(to right, #f5f7fa, #eaf1f5);
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Light mode defaults */
+.bg-light-mode {
+    background-color: #f0f4f8;
+}
+.section-card {
+    background-color: #e8edf3;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    border: none;
+    border-radius: 0.75rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+.section-title {
+    color: #5b9bd5;
+}
+.profile-title {
+    color: #6fbf73;
+}
+.btn-submit {
+    background-color: #5b9bd5;
+    color: white;
+    border: none;
+}
+
+/* Dark mode overrides */
+body.dark-mode {
+    background: #121212;
+}
+body.dark-mode .bg-light-mode,
+body.dark-mode .section-card {
+    background-color: #2b2b2b !important;
+    color: #f2f2f2;
+}
+
+/* Make sure dashboard cards or colored cards still have visible text in dark mode */
+body.dark-mode .card-header,
+body.dark-mode .card,
+body.dark-mode .section-card,
+body.dark-mode .btn-submit,
+body.dark-mode .btn,
+body.dark-mode .form-control,
+body.dark-mode .form-select {
+    color: #f2f2f2 !important;
+    background-color: #2b2b2b !important;
+    border-color: #555 !important;
+}
+
+/* For colored cards (e.g. green cards) ensure text is white or light in dark-mode */
+body.dark-mode .card.colored-card, /* assume your dashboard cards have a class 'colored-card' */
+body.dark-mode .colored-card .card-body,
+body.dark-mode .colored-card h5,
+body.dark-mode .colored-card p {
+    color: #f2f2f2 !important;
+}
+
+/* Buttons in dark mode */
+body.dark-mode .btn-submit {
+    background-color: #6fa8dc !important;
+    color: white !important;
+}
+body.dark-mode .btn {
+    border-color: #555 !important;
+}
+
+/* Form controls and select in dark mode */
+body.dark-mode .form-label,
+body.dark-mode .form-text {
+    color: #f2f2f2 !important;
+}
+body.dark-mode .form-control,
+body.dark-mode .form-select {
+    background-color: #3a3a3a !important;
+    color: #f0f0f0 !important;
+    border-color: #555 !important;
+}
+
+/* In case some cards are green or colored, ensure text contrast */
+body.dark-mode .bg-success,
+body.dark-mode .bg-primary,
+body.dark-mode .bg-warning,
+body.dark-mode .bg-danger,
+body.dark-mode .bg-info {
+    /* lighten background a bit in dark mode to improve contrast */
+    filter: brightness(1.2);
+}
+body.dark-mode .bg-success .card-title,
+body.dark-mode .bg-primary .card-title,
+body.dark-mode .bg-warning .card-title,
+body.dark-mode .bg-danger .card-title,
+body.dark-mode .bg-info .card-title {
+    color: #f2f2f2 !important;
+}
+
+</style>
+{% endblock %}

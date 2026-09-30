@@ -1,0 +1,212 @@
+{% extends "base.html" %}
+
+{% block title %}About Us - QuizMaster{% endblock %}
+
+{% block content %}
+<style>
+  body.light-mode {
+    background: linear-gradient(to right, #141e30, #243b55);
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    color: #ecf0f1;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+
+  /* Hero Section */
+  header.about-hero {
+    background: linear-gradient(135deg, #2b5876, #4e4376);
+    color: #f1f1f1;
+    text-align: center;
+    padding: 90px 25px;
+    border-radius: 20px;
+    box-shadow: 0 10px 35px rgba(0, 0, 0, 0.3);
+    margin-bottom: 60px;
+  }
+
+  header.about-hero h1 {
+    font-size: 44px;
+    font-weight: 700;
+    margin-bottom: 20px;
+  }
+
+  header.about-hero p {
+    font-size: 18px;
+    max-width: 760px;
+    margin: 0 auto;
+    line-height: 1.8;
+    opacity: 0.95;
+  }
+
+  /* Section Headings */
+  h2 {
+    color: #f1f4f8;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 1rem;
+  }
+
+  /* Mission Container */
+  .mission-container {
+    background: rgba(20, 30, 50, 0.75);
+    border-radius: 12px;
+    padding: 30px 25px;
+    max-width: 800px;
+    margin: 0 auto 60px auto;
+  }
+
+  /* Mission & General Text */
+  .lead {
+    font-size: 17px;
+    color: #e0e6f0;
+    line-height: 1.7;
+    max-width: 760px;
+    margin: 0 auto 1.5rem auto;
+  }
+
+  /* Feature Cards */
+  .feature-box {
+    background: linear-gradient(145deg, rgba(36, 50, 75, 0.85), rgba(56, 70, 100, 0.85));
+    border-radius: 16px;
+    padding: 30px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease-in-out;
+  }
+
+  .feature-box:hover {
+    transform: translateY(-6px);
+    background: linear-gradient(145deg, rgba(44, 62, 80, 0.95), rgba(30, 39, 56, 0.95));
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.4);
+  }
+
+  .feature-box h3 {
+    color: #ffffff;
+    margin-bottom: 15px;
+    font-weight: 600;
+    font-size: 18px;
+  }
+
+  .feature-box p {
+    color: #bdc3c7;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  /* Contact Section */
+  .contact-box {
+    background: linear-gradient(145deg, rgba(50, 60, 90, 0.9), rgba(40, 50, 70, 0.9));
+    border-radius: 20px;
+    padding: 55px 30px;
+    box-shadow: 0 6px 30px rgba(0, 0, 0, 0.2);
+    margin-top: 60px;
+    backdrop-filter: blur(8px);
+    color: #dcdde1;
+  }
+
+  .contact-box h2 {
+    color: #f5f6fa;
+    margin-bottom: 25px;
+  }
+
+  .contact-box p {
+    font-size: 16px;
+    margin-bottom: 10px;
+  }
+
+  /* Custom Button */
+  .btn-custom {
+    background: linear-gradient(135deg, #8e2de2, #4a00e0);
+    color: #ffffff;
+    padding: 12px 32px;
+    border-radius: 50px;
+    font-weight: 600;
+    border: none;
+    font-size: 16px;
+    transition: all 0.3s ease;
+  }
+
+  .btn-custom:hover {
+    background: linear-gradient(135deg, #4a00e0, #8e2de2);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 18px rgba(0, 0, 0, 0.25);
+  }
+
+  @media (max-width: 768px) {
+    header.about-hero h1 {
+      font-size: 32px;
+    }
+
+    header.about-hero p {
+      font-size: 16px;
+    }
+  }
+</style>
+
+<!-- Hero Section -->
+<header class="about-hero">
+  <h1>About QuizMaster 🎓</h1>
+  <p>
+    The ultimate AI-powered quiz platform designed to make learning interactive, fun, and effective. 
+    Discover knowledge, test your skills, and track your progress like never before.
+  </p>
+</header>
+
+<div class="container">
+  <!-- Mission -->
+  <div class="mission-container">
+    <h2>Our Mission</h2>
+    <p class="lead text-center">
+      At <strong>QuizMaster</strong>, we believe learning should be engaging and accessible to everyone. 
+      With Generative AI, our platform dynamically creates quizzes in categories like 
+      <em>Academics, Technology, General Knowledge, and more</em>.
+    </p>
+    <p class="lead text-center">
+      Unlike static question banks, our quizzes evolve with your preferences. Each session adapts to your 
+      category, subcategory, and difficulty, ensuring you're always challenged at the right pace.
+    </p>
+  </div>
+
+  <!-- Features -->
+  <h2>Why Choose QuizMaster?</h2>
+  <div class="row g-4 mb-5">
+    <div class="col-md-6 col-lg-3">
+      <div class="feature-box text-center h-100">
+        <h3>🌐 Multiple Categories</h3>
+        <p>From academic topics to fun trivia — explore a wide range of quizzes made for everyone.</p>
+      </div>
+    </div>
+    <div class="col-md-6 col-lg-3">
+      <div class="feature-box text-center h-100">
+        <h3>⚡ AI-Generated Questions</h3>
+        <p>Stay engaged with fresh, unique questions every session, powered by AI intelligence.</p>
+      </div>
+    </div>
+    <div class="col-md-6 col-lg-3">
+      <div class="feature-box text-center h-100">
+        <h3>📊 Progress Tracking</h3>
+        <p>Analyze your performance, revisit quizzes, and track your learning journey over time.</p>
+      </div>
+    </div>
+    <div class="col-md-6 col-lg-3">
+      <div class="feature-box text-center h-100">
+        <h3>🎯 Adaptive Difficulty</h3>
+        <p>Let the system tailor quiz difficulty to your performance for optimal learning.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contact Section -->
+  <div class="contact-box text-center mb-5">
+    <h2>Contact Us</h2>
+    <p>Have questions, suggestions, or feedback? We’d love to hear from you.</p>
+    <p>📧 Email: <strong>support@quizmaster.com</strong></p>
+    <p>📞 Phone: <strong>+91 98765 43210</strong></p>
+    <p>📍 Location: <strong>Mumbai, India</strong></p>
+  </div>
+
+  <!-- Back Button -->
+  <div class="text-center mb-5">
+    <a href="{% url 'login' %}" class="btn btn-custom">⬅ Back to Login</a>
+  </div>
+</div>
+{% endblock %}

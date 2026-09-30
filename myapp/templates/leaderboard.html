@@ -1,0 +1,242 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="leaderboard-container">
+
+    <!-- Top 3 Users Section -->
+    <section class="top-users">
+        <h1 class="leaderboard-title">🏆 Top Champions</h1>
+        <div class="top-users-cards">
+            {% for user in top_users %}
+            <div class="top-user-card {% if user.username == request.user.username %}current-user{% endif %}">
+                <div class="medal">
+                    {% if forloop.counter == 1 %}🥇
+                    {% elif forloop.counter == 2 %}🥈
+                    {% elif forloop.counter == 3 %}🥉{% endif %}
+                </div>
+                <div class="username">{{ user.username }}</div>
+                <div class="avg-score">{{ user.avg_score|floatformat:0 }}%</div>
+                <div class="attempts">{{ user.attempts }} Attempts</div>
+                {% if user.avg_score >= 90 %}
+                    <span class="badge badge-gold">Excellent</span>
+                {% elif user.avg_score >= 70 %}
+                    <span class="badge badge-silver">Great</span>
+                {% elif user.avg_score >= 50 %}
+                    <span class="badge badge-bronze">Good</span>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <!-- All Users Leaderboard Table -->
+    <section class="all-users">
+        <h2>📊 Complete Leaderboard</h2>
+        <div class="leaderboard-table">
+            <div class="leaderboard-header">
+                <span>Rank</span>
+                <span>Username</span>
+                <span>Average Score</span>
+                <span>Attempts</span>
+                <span>Progress</span>
+            </div>
+            {% for user in users %}
+            <div class="leaderboard-row {% if user.username == request.user.username %}current-user{% endif %}">
+                <div class="rank">
+                    {% if forloop.counter <= 3 %}
+                        {% if forloop.counter == 1 %}🥇
+                        {% elif forloop.counter == 2 %}🥈
+                        {% elif forloop.counter == 3 %}🥉{% endif %}
+                    {% else %}
+                        {{ forloop.counter }}
+                    {% endif %}
+                </div>
+                <div class="username">{{ user.username }}</div>
+                <div class="avg-score">{{ user.avg_score|floatformat:0 }}%</div>
+                <div class="attempts">{{ user.attempts }}</div>
+                <div class="score">
+                    <div class="progress">
+                        <div class="progress-bar" style="width: {{ user.avg_score|floatformat:0 }}%;">
+                            {{ user.avg_score|floatformat:0 }}%
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <!-- Charts Section -->
+    <section class="charts" style="margin-top: 60px; text-align: center;">
+        <h2>📈 Leaderboard Analytics</h2>
+            <p style="color: #555; font-size: 16px; margin-bottom: 20px;">
+                Compare average scores and total quiz attempts of all users
+            </p>
+        <div style="width: 95%; margin: 0 auto; border-top: 2px solid #00796b; opacity: 0.2; margin-bottom: 20px;"></div>
+        <canvas id="leaderboardChart" height="250"></canvas>
+    </section>
+
+
+    <!-- Back Button -->
+    <a href="{% url 'dashboard' %}" class="back-btn">⬅ Back to Dashboard</a>
+</div>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+const ctx = document.getElementById('leaderboardChart').getContext('2d');
+const usernames = [{% for user in users %}'{{ user.username }}'{% if not forloop.last %}, {% endif %}{% endfor %}];
+const scores = [{% for user in users %}{{ user.avg_score|floatformat:0 }}{% if not forloop.last %}, {% endif %}{% endfor %}];
+const attempts = [{% for user in users %}{{ user.attempts }}{% if not forloop.last %}, {% endif %}{% endfor %}];
+
+const colors = usernames.map(u => u === '{{ request.user.username }}' ? '#ff9800' : '#26a69a');
+
+new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: usernames,
+        datasets: [
+            {
+                label: 'Average Score (%)',
+                data: scores,
+                backgroundColor: colors,
+                borderRadius: 8
+            },
+            {
+                label: 'Total Attempts',
+                data: attempts,
+                type: 'line',
+                borderColor: '#ff5722',
+                borderWidth: 2,
+                fill: false,
+                tension: 0.4
+            }
+        ]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            title: { display: true, text: 'Leaderboard Overview', font: { size: 18 } },
+            tooltip: { mode: 'index', intersect: false }
+        },
+        scales: {
+            y: { beginAtZero: true },
+            x: { ticks: { color: '#004d40' } }
+        }
+    }
+});
+</script>
+
+<style>
+body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #e0f7fa, #f9fbe7);
+    margin: 0;
+}
+
+.leaderboard-container {
+    width: 95%;
+    margin: 20px auto;
+}
+
+/* Top 3 Users */
+.top-users-cards {
+    display: flex;
+    justify-content: center;
+    gap: 25px;
+    flex-wrap: wrap;
+    margin-bottom: 50px;
+}
+.top-user-card {
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 20px;
+    width: 220px;
+    text-align: center;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    position: relative;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.top-user-card:hover {
+    transform: translateY(-5px) scale(1.05);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.2);
+}
+.top-user-card .medal { font-size: 36px; margin-bottom: 10px; }
+.top-user-card .username { font-weight: 600; font-size: 20px; color: #00796b; }
+.top-user-card .avg-score { font-weight: 700; font-size: 22px; color: #26a69a; margin: 5px 0; }
+.top-user-card .attempts { font-size: 14px; color: #555; }
+.badge {
+    display: inline-block;
+    margin-top: 8px;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    color: #fff;
+}
+.badge-gold { background: #ffd700; color: #000; }
+.badge-silver { background: #c0c0c0; color: #000; }
+.badge-bronze { background: #cd7f32; color: #fff; }
+
+/* All Users Table */
+.leaderboard-table { overflow-x: auto; background: #fff; border-radius: 15px; box-shadow: 0 6px 20px rgba(0,0,0,0.1); }
+.leaderboard-header, .leaderboard-row {
+    display: grid;
+    grid-template-columns: 1fr 3fr 2fr 2fr 3fr;
+    padding: 12px 20px;
+    align-items: center;
+}
+.leaderboard-header { background: #00796b; color: #fff; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+.leaderboard-row { border-bottom: 1px solid #ddd; transition: all 0.3s ease; }
+.leaderboard-row:hover { background: #e0f2f1; transform: scale(1.01); }
+.rank { font-size: 18px; font-weight: 600; }
+.username { font-weight: 500; color: #004d40; }
+.avg-score { font-weight: 600; color: #00796b; }
+.attempts { font-weight: 500; color: #555; }
+.progress { background: #e0e0e0; border-radius: 10px; height: 18px; overflow: hidden; }
+.progress-bar { height: 100%; background: linear-gradient(90deg, #00796b, #26a69a); color: #fff; font-size: 12px; text-align: center; line-height: 18px; }
+
+/* Charts Section */
+.charts { background: #f9fbe7; padding: 25px; border-radius: 20px; box-shadow: 0 6px 15px rgba(0,0,0,0.05); margin-bottom: 40px; }
+
+/* Separator between leaderboard table and analytics */
+.all-users-section {
+    margin-bottom: 60px; /* increased space */
+    position: relative;
+}
+
+.leaderboard-table::after {
+    content: "";
+    display: block;
+    width: 100%;
+    height: 2px;
+    background: #00796b;
+    margin: 40px 0 0 0; /* space before the chart */
+    border-radius: 1px;
+    opacity: 0.3;
+}
+
+/* Back Button */
+.back-btn {
+    display: inline-block;
+    margin-bottom: 40px;
+    background: #00796b;
+    color: #fff;
+    padding: 12px 25px;
+    border-radius: 30px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+.back-btn:hover { background: #004d40; transform: scale(1.05); }
+
+.current-user { background: #d1f2eb !important; border-left: 5px solid #00796b; }
+
+@media (max-width: 900px) {
+    .leaderboard-header, .leaderboard-row { grid-template-columns: 1fr 2fr 2fr 2fr 2fr; font-size: 14px; }
+    .top-user-card { width: 45%; }
+}
+@media (max-width: 500px) {
+    .top-user-card { width: 100%; }
+}
+</style>
+{% endblock %}

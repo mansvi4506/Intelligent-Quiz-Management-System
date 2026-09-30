@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Select Difficulty for {{ subcategory.name }}</h2>
+<ul>
+  {% for diff in difficulties %}
+    <li><a href="{% url 'start_quiz' subcategory.id diff %}">{{ diff }}</a></li>
+  {% endfor %}
+</ul>
+{% endblock %}

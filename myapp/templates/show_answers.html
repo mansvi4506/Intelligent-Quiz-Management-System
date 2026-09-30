@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center text-primary mb-4">📝 Quiz Answers</h2>
+
+    <div class="score-summary text-center mb-4">
+        <h4>{{ attempt.user.username }}'s Quiz: {{ attempt.subcategory }} ({{ attempt.difficulty|capfirst }})</h4>
+        <p>Score: <strong>{{ attempt.score }}/{{ attempt.total }}</strong></p>
+        <p>Date: {{ attempt.timestamp|date:"d M Y H:i" }}</p>
+    </div>
+
+    <div class="answers-list">
+        {% for ans in answers %}
+        <div class="card mb-3 answer-card shadow-sm {% if ans.is_correct %}correct{% else %}wrong{% endif %}">
+            <div class="card-body">
+                <h5 class="card-title">Q{{ forloop.counter }}. {{ ans.quiz.question }}</h5>
+                <ul class="list-unstyled mt-2">
+                    <li {% if ans.selected_answer == ans.quiz.correct_answer %}class="text-success fw-bold"{% else %}class="text-danger fw-bold"{% endif %}>
+                        Your Answer: {{ ans.selected_answer }}
+                        {% if ans.is_correct %}
+                            ✅
+                        {% else %}
+                            ❌
+                        {% endif %}
+                    </li>
+                    <li class="text-success">Correct Answer: {{ ans.quiz.correct_answer }}</li>
+                </ul>
+
+                <!-- Explanation -->
+                {% if ans.quiz.explanation and "Automatic explanation generation failed" not in ans.quiz.explanation %}
+                    <p class="mt-2 text-secondary">
+                        💬 <strong>Explanation:</strong> {{ ans.quiz.explanation }}
+                    </p>
+                {% else %}
+                    <p class="mt-2 text-muted fst-italic">
+                        💬 <strong>Explanation:</strong> No explanation available.
+                    </p>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="text-center mt-4">
+        <a href="{% url 'dashboard' %}" class="btn btn-primary px-4">Back to Dashboard</a>
+        <a href="{% url 'quiz_history' %}" class="btn btn-secondary px-4">Quiz History</a>
+    </div>
+</div>
+
+<style>
+.container {
+    max-width: 800px;
+}
+
+.answer-card.correct {
+    border-left: 5px solid #28a745;
+}
+
+.answer-card.wrong {
+    border-left: 5px solid #dc3545;
+}
+
+.answer-card .card-title {
+    color: #333;
+}
+
+.score-summary h4 {
+    color: #38b3a9;
+}
+
+.score-summary p {
+    font-size: 16px;
+    color: #555;
+}
+
+ul li {
+    font-size: 14px;
+}
+
+.text-secondary {
+    font-size: 13px;
+}
+</style>
+{% endblock %}

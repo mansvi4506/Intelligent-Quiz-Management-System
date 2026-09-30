@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Select Subcategory</h2>
+<ul>
+  {% for sub in subcategories %}
+    <li><a href="{% url 'select_difficulty' sub.id %}">{{ sub.name }}</a></li>
+  {% endfor %}
+</ul>
+{% endblock %}

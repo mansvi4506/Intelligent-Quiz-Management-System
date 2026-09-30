@@ -1,0 +1,322 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="badges-container">
+    <!-- 🌟 Header -->
+    <h1 class="page-title">Your Badges 🏅</h1>
+    <p class="page-subtitle">Celebrate your achievements! Share your success and keep collecting more.</p>
+
+    <!-- 📊 Badge Summary -->
+    <div class="glass-card summary-card">
+        <div class="summary-icon">🏆</div>
+        <h2>Badge Collection</h2>
+        <div class="badge-counter">You have {{ total_badges|default:0 }} badges</div>
+        <p class="summary-tip">Keep quizzing to unlock more rewards!</p>
+        <a href="{% url 'quiz' %}" class="btn-badge">Earn More →</a>
+    </div>
+
+    <!-- 🏅 Earned Badges Grid -->
+    <div class="glass-card badges-grid-card">
+        <h2>Earned Badges</h2>
+        <div class="badges-grid">
+            {% for badge in badges %}
+            <div class="badge-item {% if badge.name == 'Beginner' %}badge-beginner{% elif badge.name == 'Quiz Enthusiast' %}badge-enthusiast{% elif badge.name == 'Quiz Master' %}badge-master{% elif badge.name == 'Streak Starter' %}badge-streak{% else %}badge-default{% endif %}">
+                 
+                <!-- Ribbon -->
+                <div class="badge-ribbon">{{ badge.name }}</div>
+
+                <!-- Animated Icon (emoji or SVG) -->
+                <div class="badge-icon" aria-label="{{ badge.name }} icon">{{ badge.icon|safe }}</div>
+
+                <p class="badge-description">{{ badge.description }}</p>
+
+                <!-- Share Buttons -->
+                <div class="badge-share">
+                    <button onclick="copyToClipboard('{{ badge.name }}')" class="share-btn" aria-label="Copy badge name">📋 Copy</button>
+                    <button onclick="shareBadge('{{ badge.name }}')" class="share-btn" aria-label="Share badge">🔗 Share</button>
+                </div>
+            </div>
+            {% empty %}
+            <p>No badges yet. Take a quiz to earn your first one!</p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- 💡 Tips -->
+    <div class="glass-card tips-card">
+        <h2>How to Earn Badges</h2>
+        <ul class="tips-list">
+            <li>Complete daily quizzes to earn streak badges.</li>
+            <li>Score high to unlock performance-based badges.</li>
+            <li>Reach major milestones for special rewards.</li>
+        </ul>
+    </div>
+</div>
+
+<!-- 🔧 JavaScript for Sharing -->
+<script>
+function copyToClipboard(text) {
+    navigator.clipboard.writeText(text)
+        .then(() => alert(`Copied badge name: "${text}"`))
+        .catch(err => alert("Failed to copy badge name."));
+}
+
+function shareBadge(badgeName) {
+    const shareData = {
+        title: "Check out my badge!",
+        text: `I earned the "${badgeName}" badge on QuizMaster! 🏆`,
+        url: window.location.href
+    };
+    if (navigator.share) {
+        navigator.share(shareData).catch(err => console.error("Share failed:", err));
+    } else {
+        alert("Sharing not supported on your browser. You can copy the badge name instead.");
+    }
+}
+</script>
+
+<!-- 🎨 Styles -->
+<style>
+body {
+    background: linear-gradient(-45deg, #0f0c29, #302b63, #24243e, #2b5876);
+    background-size: 400% 400%;
+    animation: gradientShift 15s ease infinite;
+    font-family: 'Poppins', sans-serif;
+    color: #2e2e2e;
+    overflow-x: hidden;
+}
+
+@keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.badges-container {
+    max-width: 1000px;
+    margin: 60px auto;
+    text-align: center;
+    animation: fadeIn 1.2s ease-in-out;
+    padding: 0 20px;
+}
+
+.page-title {
+    font-size: 42px;
+    color: #ffd700;
+    font-weight: 700;
+    margin-bottom: 10px;
+    text-shadow: 0 2px 8px rgba(255,215,0,0.5);
+}
+
+.page-subtitle {
+    font-size: 18px;
+    color: #004d40;
+    margin-bottom: 40px;
+}
+
+/* 🌫 Glassmorphism */
+.glass-card {
+    background: rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(18px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 25px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+    padding: 30px;
+    margin-bottom: 30px;
+    transition: transform 0.3s ease;
+}
+.glass-card:hover {
+    transform: translateY(-5px);
+}
+
+/* 📊 Summary Card */
+.summary-icon {
+    font-size: 60px;
+    margin-bottom: 15px;
+    animation: shine 2s ease-in-out infinite;
+}
+@keyframes shine {
+    0%, 100% { filter: brightness(1); }
+    50% { filter: brightness(1.3); }
+}
+.badge-counter {
+    font-size: 48px;
+    color: #ffd700;
+    font-weight: 800;
+    margin: 10px 0;
+    text-shadow: 0 2px 4px rgba(255,215,0,0.3);
+}
+.summary-tip {
+    font-size: 16px;
+    color: #333;
+    margin-bottom: 20px;
+}
+.btn-badge {
+    background: linear-gradient(45deg, #ffd700, #ffed4e);
+    color: #222;
+    padding: 12px 28px;
+    border-radius: 30px;
+    text-decoration: none;
+    font-weight: 600;
+    box-shadow: 0 4px 15px rgba(255,215,0,0.3);
+    transition: all 0.3s ease;
+}
+.btn-badge:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 20px rgba(255,215,0,0.4);
+}
+
+/* 🏅 Badges Grid */
+.badges-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 32px;
+    margin-top: 20px;
+}
+
+.badge-item {
+    position: relative;
+    background: linear-gradient(145deg, #ffffff, #e0e0e0);
+    border-radius: 28px;
+    padding: 60px 20px 36px 20px; /* Increased top padding for ribbon */
+    box-shadow:
+        8px 8px 20px rgba(0,0,0,0.1),
+        inset 0 0 12px rgba(255,255,255,0.7);
+    text-align: center;
+    cursor: default;
+    transition: transform 0.35s ease, box-shadow 0.35s ease;
+    overflow: visible;
+    user-select: none;
+}
+
+.badge-item:hover {
+    transform: scale(1.07);
+    box-shadow:
+        0 0 20px 3px var(--badge-glow-color, #ffd700),
+        8px 8px 20px rgba(0,0,0,0.15),
+        inset 0 0 18px rgba(255,255,255,0.9);
+    z-index: 10;
+}
+
+/* Ribbon */
+.badge-ribbon {
+    position: absolute;
+    top: 10px; /* Slightly down from top */
+    left: 50%;
+    transform: translateX(-50%) rotate(0deg);
+    background: var(--badge-ribbon-bg, #ffd700);
+    color: #222;
+    font-weight: 700;
+    font-size: 14px;
+    padding: 6px 28px;
+    border-radius: 12px;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    user-select: none;
+    pointer-events: none;
+    white-space: nowrap;
+    z-index: 15;
+}
+
+/* Badge Icon */
+.badge-icon {
+    font-size: 72px;
+    margin-bottom: 20px; /* Added margin below icon */
+    filter: drop-shadow(0 2px 3px rgba(0,0,0,0.1));
+    transition: filter 0.35s ease;
+    user-select: none;
+}
+
+.badge-item:hover .badge-icon {
+    filter: drop-shadow(0 0 12px var(--badge-glow-color, #ffd700));
+}
+
+/* Badge Description */
+.badge-description {
+    font-size: 15px;
+    color: #444;
+    line-height: 1.4;
+    margin-bottom: 22px; /* More spacing */
+    user-select: text;
+}
+
+/* Share Buttons */
+.badge-share {
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+}
+.share-btn {
+    background: var(--badge-glow-color, #ffd700);
+    color: #222;
+    font-weight: 700;
+    font-size: 14px;
+    padding: 8px 20px;
+    border-radius: 30px;
+    border: none;
+    box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+    cursor: pointer;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    user-select: none;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.share-btn:hover {
+    background: #fff176;
+    box-shadow: 0 6px 20px rgba(255, 241, 118, 0.7);
+}
+
+/* Unique Colors for Badges */
+.badge-beginner {
+    --badge-glow-color: #00c896;
+    --badge-ribbon-bg: #00bfa5;
+    background: linear-gradient(145deg, #d0fff4, #a1f0e7);
+    border: 2px solid #00c896;
+}
+.badge-enthusiast {
+    --badge-glow-color: #ffcc00;
+    --badge-ribbon-bg: #f9a825;
+    background: linear-gradient(145deg, #fff8d7, #fff176);
+    border: 2px solid #ffcc00;
+}
+.badge-master {
+    --badge-glow-color: #ff4081;
+    --badge-ribbon-bg: #d81b60;
+    background: linear-gradient(145deg, #ffd9e5, #ff79a6);
+    border: 2px solid #ff4081;
+}
+.badge-streak {
+    --badge-glow-color: #ff6f00;
+    --badge-ribbon-bg: #ff8f00;
+    background: linear-gradient(145deg, #ffe0b2, #ffcc80);
+    border: 2px solid #ff6f00;
+}
+.badge-default {
+    --badge-glow-color: #9e9e9e;
+    --badge-ribbon-bg: #757575;
+    background: linear-gradient(145deg, #eeeeee, #cccccc);
+    border: 2px solid #9e9e9e;
+}
+
+/* 💡 Tips */
+.tips-list {
+    text-align: left;
+    max-width: 600px;
+    margin: 0 auto;
+    list-style: inside disc;
+    color: #333;
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+</style>
+
+{% endblock %}

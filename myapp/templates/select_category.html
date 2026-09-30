@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Select Quiz Category</h2>
+<ul>
+  {% for category in categories %}
+    <li><a href="{% url 'select_subcategory' category.id %}">{{ category.name }}</a></li>
+  {% endfor %}
+</ul>
+{% endblock %}

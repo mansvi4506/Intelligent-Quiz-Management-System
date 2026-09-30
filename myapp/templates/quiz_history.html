@@ -1,0 +1,201 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5 custom-content">
+  <h2 class="text-center mb-4 title-heading">📊 Your Quiz History</h2>
+  <div class="table-responsive">
+    <table class="table quiz-history-table table-borderless">
+      <thead>
+        <tr>
+          <th>Category</th>
+          <th>Subcategory</th>
+          <th>Difficulty</th>
+          <th>Score</th>
+          <th>Date</th>
+          <th>Answers</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for attempt in attempts %}
+        <tr>
+          <td>{{ attempt.category }}</td>
+          <td>{{ attempt.subcategory }}</td>
+          <td>{{ attempt.difficulty|title }}</td>
+          <td>{{ attempt.score }}/{{ attempt.total }}</td>
+          <td>{{ attempt.timestamp|date:"d M Y H:i" }}</td>
+          <td>
+            <a href="{% url 'show_answers' attempt.id %}" class="btn btn-sm btn-view">View</a>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="6" class="text-center">No quiz attempts yet.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <div class="text-center mt-4">
+    <a href="{% url 'dashboard' %}" class="btn btn-back">← Back to Dashboard</a>
+  </div>
+</div>
+
+<style>
+/* Container background with subtle gradient */
+.custom-content {
+  background: linear-gradient(135deg, #e3edf7 45%, #b6eed1 100%);
+  border-radius: 18px;
+  padding: 34px;
+  box-shadow: 0 12px 32px rgba(47, 61, 89, 0.14);
+  border: 1.2px solid #b6c5da24;
+}
+
+/* Give the table a bold, colorful gradient background */
+.quiz-history-table {
+  border-radius: 18px;
+  overflow: hidden;
+  background: linear-gradient(110deg, #43e97b 0%, #38f9d7 50%, #008cff 100%);
+  box-shadow: 0 6px 22px rgba(56,88,174,0.10);
+  letter-spacing: 0.02em;
+  color: #1c2035;
+  /* Blend the gradient over all cells for impact */
+}
+
+/* Table head with deep shade and more gradient */
+.quiz-history-table thead {
+  background: linear-gradient(90deg, #1077b6 20%, #61e8e1 100%);
+  color: #fff;
+  font-weight: 700;
+  font-size: 15px;
+  border-bottom: 2px solid #38f9d7;
+}
+
+/* Table rows with semi-transparent overlays for legibility */
+.quiz-history-table tbody tr {
+  background: rgba(255,255,255,0.09); /* gives glass effect */
+  transition: background 0.18s;
+}
+.quiz-history-table tbody tr:nth-child(even) {
+  background: rgba(56, 249, 215, 0.16); /* subtle teal */
+}
+.quiz-history-table tbody tr:hover {
+  background: linear-gradient(90deg, #e0f7fa 60%, #c2e9fb 100%);
+  box-shadow: 0 2px 10px #38f9d726;
+}
+
+/* Table cells */
+.quiz-history-table td, .quiz-history-table th {
+  vertical-align: middle;
+  text-align: center;
+  border-bottom: 1.2px solid #38f9d7;
+  font-size: 15px;
+  padding: 12px;
+}
+
+/* Buttons: modern gradients */
+.btn-view {
+  background: linear-gradient(90deg, #56c6e6 40%, #3a7bd5 100%);
+  color: #fff;
+  padding: 7px 18px;
+  border-radius: 9px;
+  font-weight: 500;
+  font-size: 15px;
+  border: none;
+  box-shadow: 0 2px 4px #4aacd473;
+  transition: background 0.24s, box-shadow 0.18s;
+}
+.btn-view:hover {
+  background: linear-gradient(90deg, #4e9588 60%, #274472 100%);
+  color: #fff;
+  box-shadow: 0 3px 10px #3867d144;
+  transform: translateY(-2px) scale(1.03);
+}
+
+.btn-back {
+  background: linear-gradient(90deg, #63ea99 50%, #28b485 100%);
+  color: #fff;
+  padding: 12px 28px;
+  border-radius: 30px;
+  border: none;
+  font-weight: 600;
+  font-size: 15.5px;
+  text-decoration: none;
+  box-shadow: 0 4px 16px #47b68834;
+  transition: background 0.25s, transform 0.12s;
+}
+.btn-back:hover {
+  background: linear-gradient(90deg, #34c972 60%, #188c5e 100%);
+  color: #f4f8ff;
+  transform: translateY(-2px) scale(1.04);
+}
+
+/* Typography enhancements */
+body {
+  font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
+  background: #f6f9fc;
+}
+.title-heading {
+  font-weight: 700;
+  color: #294a6d;
+  letter-spacing: 0.7px;
+  text-shadow: 0 2px 10px #a5c5e8a0;
+}
+.quiz-history-table .text-center {
+  color: #3d5b6e;
+  opacity: 0.86;
+  font-style: italic;
+}
+
+/* Dark Mode */
+body.dark-mode .custom-content {
+  background: linear-gradient(135deg, #1a2432 70%, #335850 100%);
+  box-shadow: 0 12px 38px rgba(0,0,0,0.38);
+}
+body.dark-mode .quiz-history-table {
+  background: linear-gradient(110deg, #162447 0%, #32e7c2 90%, #141e30 100%);
+  color: #dde8f6;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.38);
+}
+body.dark-mode .quiz-history-table thead {
+  background: linear-gradient(90deg, #14374c 60%, #32e7c2 100%);
+  color: #eaf3fd;
+  border-bottom: 2px solid #32e7c2;
+}
+body.dark-mode .quiz-history-table tbody tr,
+body.dark-mode .quiz-history-table tbody tr:hover {
+  background: #1f3044;
+}
+body.dark-mode .quiz-history-table tbody tr:nth-child(even) {
+  background: #285a6e;
+}
+body.dark-mode .quiz-history-table td, 
+body.dark-mode .quiz-history-table th {
+  border-bottom: 1px solid #32e7c2;
+}
+body.dark-mode .btn-view {
+  background: linear-gradient(96deg, #4780b2 50%, #248482 100%);
+  color: #dbefff;
+  box-shadow: 0 1px 8px #5fa6eb2b;
+}
+body.dark-mode .btn-view:hover {
+  background: linear-gradient(96deg, #2776a6 60%, #14213d 100%);
+  color: #e6f6ff;
+}
+body.dark-mode .btn-back {
+  background: linear-gradient(93deg, #39c87d 40%, #23694e 100%);
+  color: #ecfdf8;
+  box-shadow: 0 4px 12px #2ebc7462;
+}
+body.dark-mode .btn-back:hover {
+  background: linear-gradient(93deg, #25a765 60%, #193f33 100%);
+  color: #fff;
+}
+body.dark-mode .quiz-history-table .text-center {
+  color: #7cbbc5;
+}
+body.dark-mode .title-heading {
+  color: #a2e8f5;
+  text-shadow: 0 1px 14px #15212fb2;
+}
+</style>
+{% endblock %}

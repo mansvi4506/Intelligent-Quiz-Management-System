@@ -1,0 +1,461 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+    /* Card container for the whole quiz options */
+    .quiz-options-card {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 20px;
+        padding: 2rem 3rem;
+        box-shadow: 0 15px 30px rgb(102 126 234 / 0.5);
+        max-width: 720px;
+        margin: 3rem auto 4rem auto;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .quiz-options-card h2 {
+        font-weight: 700;
+        font-size: 2.3rem;
+        margin-bottom: 2rem;
+        text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    }
+
+    /* Category cards */
+    #categoryCards {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+    .cat-card {
+        flex: 1 1 130px;
+        cursor: pointer;
+        border-radius: 16px;
+        padding: 1.3rem 1rem;
+        box-shadow: 0 6px 12px rgb(0 0 0 / 0.12);
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: white;
+        user-select: none;
+        transition: box-shadow 0.3s ease, transform 0.3s ease;
+        text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+    }
+    .cat-card:hover {
+        box-shadow: 0 12px 22px rgb(0 0 0 / 0.25);
+        transform: scale(1.06);
+    }
+    .cat-card.selected {
+        box-shadow: 0 0 18px 4px #fff;
+        outline: 3px solid white;
+        transform: scale(1.08);
+    }
+
+    /* Unique colors & emojis per category by nth-child */
+    #categoryCards .cat-card:nth-child(1) { background: #ff6f61; } /* Red - Fun 🎉 */
+    #categoryCards .cat-card:nth-child(2) { background: #6a9fb5; } /* Blue - Miscellaneous 🧩 */
+    #categoryCards .cat-card:nth-child(3) { background: #ffb347; } /* Orange - Science 🔬 */
+    #categoryCards .cat-card:nth-child(4) { background: #3cb371; } /* Green - History 📜 */
+    #categoryCards .cat-card:nth-child(5) { background: #7b68ee; } /* Purple - Literature 📚 */
+    /* Add more colors as needed */
+
+    /* Subcategory container styled as card with fixed height and scroll */
+    #subcategoryCards {
+        margin-top: 1rem;
+        padding: 1rem 1.5rem;
+        background-color: #e7f0fe; /* subtle light blue */
+        border-radius: 16px;
+        box-shadow: 0 6px 15px rgb(0 0 0 / 0.1);
+        max-height: 250px;
+        overflow-y: auto;
+    }
+
+    /* Subcategory cards vertical */
+    .subcat-card {
+        cursor: pointer;
+        border-radius: 12px;
+        padding: 0.8rem 1rem;
+        margin-bottom: 0.8rem;
+        color: #1e2a46;
+        user-select: none;
+        transition: box-shadow 0.25s ease, transform 0.25s ease;
+        border: 2px solid transparent;
+        background-color: #dbe9ff; /* soft pastel blue */
+        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .subcat-card:hover {
+        box-shadow: 0 8px 14px rgba(0,0,0,0.2);
+        transform: scale(1.04);
+    }
+    .subcat-card.selected {
+        border-color: #0d6efd;
+        box-shadow: 0 0 14px #0d6efdcc;
+        background-color: #aacdff; /* slightly darker blue */
+        color: #0d6efd;
+        font-weight: 700;
+    }
+
+    /* Difficulty cards */
+    #difficultyCards {
+        display: flex;
+        justify-content: center;
+        gap: 1.2rem;
+        margin-top: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    .diff-card {
+        flex: 1 1 120px;
+        cursor: pointer;
+        border-radius: 16px;
+        padding: 1rem 0;
+        font-weight: 700;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+        user-select: none;
+        box-shadow: 0 6px 14px rgb(0 0 0 / 0.1);
+        transition: box-shadow 0.3s ease, transform 0.3s ease;
+        color: white;
+    }
+    .diff-card.easy {
+        background: #28a745;
+        text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+    }
+    .diff-card.medium {
+        background: #ffc107;
+        color: #212529;
+        text-shadow: none;
+    }
+    .diff-card.hard {
+        background: #dc3545;
+        text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+    }
+    .diff-card:hover {
+        box-shadow: 0 12px 24px rgb(0 0 0 / 0.25);
+        transform: scale(1.08);
+    }
+    .diff-card.selected {
+        box-shadow: 0 0 18px 5px white;
+        outline: 3px solid white;
+        transform: scale(1.1);
+        font-weight: 800;
+    }
+
+    /* Inputs for new category/subcategory */
+    .form-inputs {
+        margin-top: 1rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.8rem;
+        font-weight: 600;
+    }
+    .form-inputs input {
+        padding: 0.6rem 1rem;
+        border-radius: 12px;
+        border: none;
+        outline: none;
+        font-size: 1rem;
+    }
+    .form-inputs small {
+        color: #ddd;
+    }
+
+    /* Start Button */
+    #startBtn {
+        background: #0d6efd;
+        border: none;
+        color: white;
+        font-weight: 700;
+        font-size: 1.2rem;
+        padding: 0.75rem 2.5rem;
+        border-radius: 30px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        box-shadow: 0 8px 20px rgb(13 110 253 / 0.5);
+        user-select: none;
+    }
+    #startBtn:disabled {
+        background: #6c757d;
+        box-shadow: none;
+        cursor: not-allowed;
+    }
+</style>
+
+<div class="quiz-options-card">
+    <h2 class="text-center">📝 Select Quiz Options</h2>
+
+    <form id="quizForm" method="get">
+        <!-- Step 1: Categories -->
+        <div id="stepCategories">
+            <label class="fw-semibold" style="font-size:1.1rem;">Choose a Category</label>
+            <div id="categoryCards">
+                {% for category in categories %}
+                    <div class="cat-card" data-id="{{ category.id }}" title="{{ category.name }}">
+                        {% if category.name == "Fun & Misellaneous" %}
+                            🎉
+                        {% elif category.name == "Logical & Aptitude" %}
+                            🧩
+                        {% elif category.name == "Technology & IT" %}
+                            🔬
+                        {% elif category.name == "General Knowledge" %}
+                            📜
+                        {% elif category.name == "Academic" %}
+                            📚
+                        {% elif category.name == "Entertainment" %}
+                            🎬
+                        {% elif category.name == "Sports" %}
+                            ⚽
+                        {% else %}
+                            ❓
+                        {% endif %}
+                        {{ category.name }}
+                    </div>
+                {% endfor %}
+            </div>
+
+            <div class="form-inputs">
+                <small>Or enter a new category below</small>
+                <input type="text" id="new_category" name="new_category" placeholder="✍️ Enter new category" autocomplete="off">
+            </div>
+        </div>
+
+        <!-- Step 2: Subcategories -->
+        <div id="stepSubcategories" style="display:none;">
+            <label class="fw-semibold" style="font-size:1.1rem;">Select a Subcategory</label>
+            <div id="subcategoryCards"></div>
+
+            <div class="form-inputs">
+                <small>Or enter a new subcategory below</small>
+                <input type="text" id="new_subcategory" name="new_subcategory" placeholder="✍️ Enter new subcategory" autocomplete="off">
+            </div>
+        </div>
+
+        <!-- Step 3: Difficulty -->
+        <div id="stepDifficulty" style="display:none;">
+            <label class="fw-semibold" style="font-size:1.1rem;">Choose Difficulty</label>
+            <div id="difficultyCards">
+                <div class="diff-card easy" data-difficulty="Easy">🟢 Easy</div>
+                <div class="diff-card medium" data-difficulty="Medium">🟡 Medium</div>
+                <div class="diff-card hard" data-difficulty="Hard">🔴 Hard</div>
+            </div>
+        </div>
+
+        <!-- Start Button -->
+        <div class="text-center">
+            <button type="submit" id="startBtn" disabled>🚀 Start Quiz</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    const categories = {
+        {% for category in categories %}
+            "{{ category.id }}": [
+                {% for sub in category.subcategories.all %}
+                    {"id": "{{ sub.id }}", "name": "{{ sub.name }}"},
+                {% endfor %}
+            ],
+        {% endfor %}
+    };
+
+    const categoryCards = document.querySelectorAll(".cat-card");
+    const subcategoryContainer = document.getElementById("subcategoryCards");
+    const newCategoryInput = document.getElementById("new_category");
+    const newSubcategoryInput = document.getElementById("new_subcategory");
+    const startBtn = document.getElementById("startBtn");
+
+    const stepCategories = document.getElementById("stepCategories");
+    const stepSubcategories = document.getElementById("stepSubcategories");
+    const stepDifficulty = document.getElementById("stepDifficulty");
+
+    let selectedCategoryId = null;
+    let selectedSubcategoryId = null;
+    let selectedDifficulty = null;
+
+    // Utility: clear selected class from a group
+    function clearSelection(nodes) {
+        nodes.forEach(n => n.classList.remove("selected"));
+    }
+
+    // When a category card is clicked
+    categoryCards.forEach(card => {
+        card.addEventListener("click", () => {
+            clearSelection(categoryCards);
+            card.classList.add("selected");
+            selectedCategoryId = card.getAttribute("data-id");
+
+            if (newCategoryInput.value.trim() !== "") {
+                newCategoryInput.value = "";
+            }
+
+            selectedSubcategoryId = null;
+            newSubcategoryInput.value = "";
+            subcategoryContainer.innerHTML = "";
+
+            const subs = categories[selectedCategoryId] || [];
+            if (subs.length === 0) {
+                subcategoryContainer.innerHTML = "<em>No subcategories available</em>";
+            } else {
+                subs.forEach(sub => {
+                    const div = document.createElement("div");
+                    div.classList.add("subcat-card");
+                    div.setAttribute("data-id", sub.id);
+                    div.textContent = sub.name;
+                    div.title = sub.name;
+                    div.addEventListener("click", () => {
+                        clearSelection(document.querySelectorAll(".subcat-card"));
+                        div.classList.add("selected");
+                        selectedSubcategoryId = sub.id;
+
+                        if (newSubcategoryInput.value.trim() !== "") {
+                            newSubcategoryInput.value = "";
+                        }
+
+                        if (selectedDifficulty) {
+                            startBtn.disabled = false;
+                        } else {
+                            showStep(stepDifficulty);
+                            startBtn.disabled = true;
+                        }
+                    });
+                    subcategoryContainer.appendChild(div);
+                });
+            }
+
+            showStep(stepSubcategories);
+            stepDifficulty.style.display = "none";
+            startBtn.disabled = true;
+
+            checkFormValidity();
+        });
+    });
+
+    // ✅ UPDATED — New Category input logic fixed
+    // ✅ Updated: Show subcategory only when user presses Enter after typing category
+    newCategoryInput.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+            e.preventDefault();
+            if (newCategoryInput.value.trim() !== "") {
+                clearSelection(categoryCards);
+                selectedCategoryId = null;
+
+                // Show subcategory input (without label “Select a subcategory”)
+                stepSubcategories.style.display = "block";
+                document.querySelector("#stepSubcategories label").style.display = "none";
+                document.getElementById("subcategoryCards").style.display = "none";
+
+                stepDifficulty.style.display = "none";
+                selectedSubcategoryId = null;
+                newSubcategoryInput.value = "";
+                startBtn.disabled = true;
+
+                setTimeout(() => newSubcategoryInput.focus(), 300);
+            }
+        }
+    });
+
+    newCategoryInput.addEventListener("input", () => {
+        if (newCategoryInput.value.trim() === "") {
+            // Reset everything if cleared
+            stepSubcategories.style.display = "none";
+            stepDifficulty.style.display = "none";
+            selectedSubcategoryId = null;
+            newSubcategoryInput.value = "";
+            startBtn.disabled = true;
+            document.querySelector("#stepSubcategories label").style.display = "block";
+            document.getElementById("subcategoryCards").style.display = "block";
+        } else {
+            // Reveal the next step immediately; pressing Enter is not required.
+            clearSelection(categoryCards);
+            selectedCategoryId = null;
+            selectedSubcategoryId = null;
+            stepSubcategories.style.display = "block";
+            document.querySelector("#stepSubcategories label").style.display = "none";
+            document.getElementById("subcategoryCards").style.display = "none";
+            stepDifficulty.style.display = "block";
+        }
+        checkFormValidity();
+    });
+
+
+    // New Subcategory input clears subcategory cards and resets difficulty step
+    newSubcategoryInput.addEventListener("input", () => {
+        if (newSubcategoryInput.value.trim() !== "") {
+            clearSelection(document.querySelectorAll(".subcat-card"));
+            selectedSubcategoryId = null;
+            stepDifficulty.style.display = "block";
+            startBtn.disabled = !selectedDifficulty;
+        } else {
+            startBtn.disabled = true;
+        }
+        checkFormValidity();
+    });
+
+    // Difficulty cards
+    const difficultyCards = document.querySelectorAll(".diff-card");
+    difficultyCards.forEach(card => {
+        card.addEventListener("click", () => {
+            clearSelection(difficultyCards);
+            card.classList.add("selected");
+            selectedDifficulty = card.getAttribute("data-difficulty");
+            checkFormValidity();
+        });
+    });
+
+    // Show step helper
+    function showStep(stepDiv) {
+        [stepCategories, stepSubcategories, stepDifficulty].forEach(div => {
+            if (div === stepDiv) {
+                div.style.display = "block";
+            } else {
+                div.style.display = "none";
+            }
+        });
+    }
+
+    // Check form validity to enable start button
+    function checkFormValidity() {
+        const hasCategory = selectedCategoryId || newCategoryInput.value.trim() !== "";
+        // A custom category can start with the default "General" subcategory.
+        const hasSubcategory = selectedSubcategoryId || newSubcategoryInput.value.trim() !== "" || newCategoryInput.value.trim() !== "";
+        const hasDifficulty = selectedDifficulty !== null;
+
+        startBtn.disabled = !(hasCategory && hasSubcategory && hasDifficulty);
+    }
+
+    showStep(stepCategories);
+    startBtn.disabled = true;
+
+    // On submit, build URL with validation
+    document.getElementById("quizForm").addEventListener("submit", (e) => {
+        e.preventDefault();
+
+        const newCat = newCategoryInput.value.trim();
+        const newSub = newSubcategoryInput.value.trim();
+
+        if (!newCat && newSub) {
+            alert("Choose a category before entering a custom subcategory.");
+            return;
+        }
+        if (newCat && newSub && selectedSubcategoryId) {
+            alert("You cannot select from dropdown and type a new category at the same time.");
+            return;
+        }
+
+        let url;
+        if (newCat && newSub) {
+            url = "{% url 'start_quiz' 'new' 'dummy' %}".replace('dummy', selectedDifficulty);
+            url += `?new_category=${encodeURIComponent(newCat)}&new_subcategory=${encodeURIComponent(newSub)}`;
+        } else {
+            url = "{% url 'start_quiz' '0' 'dummy' %}".replace('0', selectedSubcategoryId).replace('dummy', selectedDifficulty);
+        }
+        window.location.href = url;
+    });
+</script>
+{% endblock %}

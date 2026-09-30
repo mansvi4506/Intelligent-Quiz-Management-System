@@ -1,0 +1,268 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="streaks-container">
+
+    <!-- 🌟 Header -->
+    <h1 class="page-title">Your Daily Streaks 🔥</h1>
+    <p class="page-subtitle">Keep the fire burning! Consistent learning unlocks new levels of mastery.</p>
+
+    <!-- 📊 Current Streak Card -->
+    <div class="glass-card streak-card">
+        <div class="streak-icon">🔥</div>
+        <h2>Current Streak</h2>
+        <div class="streak-counter">{{ current_streak|default:0 }} Days</div>
+        <p class="streak-tip">You've been on a roll! Complete a quiz today to keep it going.</p>
+        <a href="{% url 'quiz' %}" class="btn-streak">Continue Streak</a>
+    </div>
+
+    <!-- 📅 Streak History -->
+    <div class="glass-card history-card">
+        <h2>Streak History</h2>
+        <div class="streak-grid">
+            {% for day in streak_history %}
+            <div class="streak-day {% if day.active %}active{% else %}broken{% endif %}">
+                <span class="day-number">{{ day.date|date:"d" }}</span>
+                <span class="day-flame">🔥</span>
+            </div>
+            {% empty %}
+            <p>No streak history yet. Start today!</p>
+            {% endfor %}
+        </div>
+        <p class="history-note">Broken streaks reset the counter — but every day is a new chance!</p>
+    </div>
+
+    <!-- 💡 Tips -->
+    <div class="glass-card tips-card">
+        <h2>Streak Tips</h2>
+        <ul class="tips-list">
+            <li>Log in daily for quick quizzes to maintain your streak.</li>
+            <li>Aim for 7-day milestones to earn bonus badges.</li>
+            <li>Share your streak on social media for extra motivation!</li>
+        </ul>
+    </div>
+
+</div>
+
+<style>
+/* 🌈 Background & Typography (Matching Dashboard) */
+body {
+    background: linear-gradient(135deg, #d4fc79, #96e6a1, #a1c4fd, #c2e9fb);
+    background-size: 300% 300%;
+    animation: gradientShift 10s ease infinite;
+    font-family: 'Poppins', sans-serif;
+    color: #2e2e2e;
+    overflow-x: hidden;
+}
+
+@keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.streaks-container {
+    max-width: 900px;
+    margin: 60px auto;
+    text-align: center;
+    animation: fadeIn 1.1s ease-in-out;
+}
+
+.page-title {
+    font-size: 42px;
+    color: #ff6b35;
+    font-weight: 700;
+    margin-bottom: 10px;
+    text-shadow: 0 2px 8px rgba(255,107,53,0.3);
+}
+.page-subtitle {
+    font-size: 18px;
+    color: #004d40;
+    margin-bottom: 40px;
+}
+
+/* 🌫 Glassmorphism */
+.glass-card {
+    background: rgba(255, 255, 255, 0.35);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 25px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+    padding: 30px;
+    margin-bottom: 30px;
+    transition: transform 0.3s ease;
+}
+.glass-card:hover {
+    transform: translateY(-5px);
+}
+
+/* 📊 Streak Card */
+.streak-card {
+    position: relative;
+    overflow: hidden;
+}
+.streak-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, rgba(255,107,53,0.1), transparent);
+    opacity: 0;
+    transition: opacity 0.4s;
+}
+.streak-card:hover::before {
+    opacity: 1;
+}
+.streak-icon {
+    font-size: 60px;
+    margin-bottom: 15px;
+    animation: flameFlicker 2s ease-in-out infinite;
+}
+@keyframes flameFlicker {
+    0%, 100% { transform: scale(1) rotate(0deg); }
+    50% { transform: scale(1.05) rotate(2deg); }
+}
+.streak-card h2 {
+    color: #ff6b35;
+    font-size: 28px;
+    margin-bottom: 10px;
+}
+.streak-counter {
+    font-size: 48px;
+    color: #ff6b35;
+    font-weight: 800;
+    margin: 10px 0;
+    text-shadow: 0 2px 4px rgba(255,107,53,0.3);
+}
+.streak-tip {
+    font-size: 16px;
+    color: #333;
+    margin-bottom: 20px;
+}
+.btn-streak {
+    background: linear-gradient(45deg, #ff6b35, #ff8c42);
+    color: white;
+    padding: 12px 24px;
+    border-radius: 25px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s;
+    box-shadow: 0 4px 15px rgba(255,107,53,0.3);
+    display: inline-block;
+}
+.btn-streak:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 20px rgba(255,107,53,0.4);
+    color: white;
+    text-decoration: none;
+}
+
+/* 📅 History Card */
+.history-card h2 {
+    color: #ff6b35;
+    margin-bottom: 20px;
+}
+.streak-grid {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+.streak-day {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    transition: all 0.3s;
+    position: relative;
+}
+.streak-day.active {
+    background: linear-gradient(45deg, #ff6b35, #ff8c42);
+    color: white;
+    box-shadow: 0 4px 15px rgba(255,107,53,0.3);
+    animation: pulse 1.5s ease-in-out infinite;
+}
+.streak-day.broken {
+    background: rgba(255, 255, 255, 0.5);
+    color: #999;
+    border: 2px dashed #ccc;
+}
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+.day-number {
+    font-size: 14px;
+}
+.day-flame {
+    font-size: 12px;
+    margin-top: -5px;
+}
+.history-note {
+    font-size: 14px;
+    color: #666;
+    font-style: italic;
+}
+
+/* 💡 Tips Card */
+.tips-card h2 {
+    color: #ff6b35;
+    margin-bottom: 15px;
+}
+.tips-list {
+    text-align: left;
+    color: #333;
+    font-size: 16px;
+    list-style: none;
+    padding: 0;
+}
+.tips-list li {
+    margin-bottom: 10px;
+    padding-left: 20px;
+    position: relative;
+}
+.tips-list li::before {
+    content: "🔥";
+    position: absolute;
+    left: 0;
+    font-size: 14px;
+}
+
+/* 🌈 Animations */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* 📱 Responsive */
+@media (max-width: 768px) {
+    .streak-grid {
+        justify-content: center;
+        gap: 8px;
+    }
+    .streak-day {
+        width: 40px;
+        height: 40px;
+    }
+    .day-number {
+        font-size: 12px;
+    }
+    .day-flame {
+        font-size: 10px;
+    }
+    .page-title {
+        font-size: 36px;
+    }
+    .streak-counter {
+        font-size: 36px;
+    }
+}
+</style>
+{% endblock %}
