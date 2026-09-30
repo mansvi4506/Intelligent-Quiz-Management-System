@@ -1,11 +1,11 @@
 """
-URL configuration for first_project project.
+URL configuration for quiz_project project.
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/5.2/topics/http/urls/
 Examples:
 Function views
-    1. Add an import:  from my_app import views
+    1. Add an import:  from quiz_app import views
     2. Add a URL to urlpatterns:  path('', views.home, name='home')
 Class-based views
     1. Add an import:  from other_app.views import Home
@@ -25,7 +25,7 @@ from django.contrib.auth import views as auth_views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', auth_views.LoginView.as_view(template_name='login.html'), name='login'),
-    path('', include('myapp.urls')),
+    path('', include('quiz_app.urls')),
 ]
 
 if settings.DEBUG:

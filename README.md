@@ -2,6 +2,8 @@
 
 A Django web application for creating and taking AI-generated quizzes. Users can choose a category, topic, and difficulty, then review results, track quiz history and streaks, earn badges, and compare scores on a leaderboard.
 
+The Django project configuration lives in `quiz_project/`, and the quiz application lives in `quiz_app/`.
+
 ## Features
 
 - User registration, login, and profile editing

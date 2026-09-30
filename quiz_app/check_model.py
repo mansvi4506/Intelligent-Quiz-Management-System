@@ -6,12 +6,12 @@ import django
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 # Set Django settings module
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "first_project.settings")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "quiz_project.settings")
 django.setup()
 
 from django.conf import settings
 
-from myapp.ai import get_ai_client
+from quiz_app.ai import get_ai_client
 
 # Initialize the OpenAI-compatible Groq client
 client = get_ai_client()

@@ -7,7 +7,7 @@ from .models import Category, SubCategory
 
 @receiver(post_migrate)
 def create_default_categories(sender, **kwargs):
-    if sender.name == 'myapp':
+    if sender.name == 'quiz_app':
         data = {
             "Academic": ["Math", "Science", "History", "Geography", "Computer Science", "Languages"],
             "Technology & IT": ["Programming", "Web Development", "Cybersecurity", "Data Science", "Networking"],

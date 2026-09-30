@@ -40,7 +40,7 @@ class Profile(models.Model):
 #         return f"{self.category.name} - {self.name}"
 
 # Category model
-# myapp/models.py
+# Quiz application models.
 from django.db import models
 
 class Category(models.Model):
